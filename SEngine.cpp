@@ -1,5 +1,7 @@
 #include "SEngine.h"
 #include "emils_lib/emils_lib.h"
+#include <fstream>
+#include <string>
 
 int howManyT(std::string a, std::string b)
 {
@@ -24,6 +26,11 @@ std::ostream& operator << (std::ostream& o, Point& p)
 {
 	o << "Point:" << p.pt << "=" << p.inf.getName() << "|" << p.inf.getInf(); return o;
 }
+std::ostream& operator << (std::ostream& o, Information& p)
+{
+	o << "INF:"<< p.getName() << "|" << p.getInf(); return o;
+}
+
 
 std::vector<Point> searchName(std::vector<Information> infs, std::string searched)
 {
@@ -77,6 +84,47 @@ bool searchSystem(std::string input,std::vector<Information> infs,int filter)
 		if (input == "name") vectorPrinter(pointSort(searchName(infs, get(';'))),filter);
 		else if (input == "inf") vectorPrinter(pointSort(searchInf(infs, get(';'))),filter);
 		return true;
+	}
+	else return false;
+}
+
+
+bool loader(std::string path, std::vector<Information>& infs)
+{
+	std::fstream fileVar(path); std::string input;
+	if (fileVar.is_open())
+	{
+		while (std::getline(fileVar, input))
+		{
+			std::vector<std::string> splitted = el::StrCalc::splitOut(input, ',', '"');
+			infs.push_back(Information(splitted[0], splitted[1]));
+		}
+	}
+	else { LOG("LOAD UNSUCCESFULL FILE OPENING FAILED"); return false; }
+	return true;
+}
+
+bool basicControls(std::string input, std::vector<Information> &infs)
+{
+	if (input == "resetAll")
+	{
+		std::vector<Information> n; infs = n; return true;
+	}
+	else if (input == "printAll")
+	{
+		for (Information inf : infs) LOG(inf); return true;
+	}
+	else if (input == "save")
+	{
+		std::string savePath; std::cin >> savePath;
+		std::fstream saveFile(savePath,std::fstream::out);
+		if (saveFile.is_open()) for (Information inf : infs) saveFile << '"' << inf.getName() << '"' << ',' << '"' << inf.getInf() << '"' << std::endl;
+		else LOG("SAVE UNSUCCESFULL FILE OPENING FAILED");
+	}
+	else if (input == "load")
+	{
+		std::string loadPath; std::cin >> loadPath;
+		loader(loadPath, infs);
 	}
 	else return false;
 }
