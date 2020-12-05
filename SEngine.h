@@ -23,6 +23,7 @@ std::string get(char until);
 
 struct Point { int pt; Information inf; };
 std::ostream& operator << (std::ostream& o, Point& p);
+std::ostream& operator << (std::ostream& o, Information& p);
 
 
 std::vector<Point> searchName(std::vector<Information> infs,std::string searched);
@@ -35,3 +36,6 @@ std::vector<Point> pointSort(std::vector<Point> input);
 
 bool inputSystem(std::string input,std::vector<Information> &infs);
 bool searchSystem(std::string input, std::vector<Information> infs, int filter);
+bool basicControls(std::string input, std::vector<Information>& infs);
+
+bool loader(std::string path, std::vector<Information>& infs);
